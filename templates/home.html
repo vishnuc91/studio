@@ -3,7 +3,8 @@
     <title>Home Page</title>
 </head>
 <body>
-<form id="upload">
+<h3>Click here to upload files to S3 storage</h3>
+<form id="upload" method="post" name="upload">{% csrf_token %}
     <input type="submit" name="submit">
 </form>
 </body>
