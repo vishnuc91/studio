@@ -9,4 +9,4 @@ class UploadedFiles(models.Model):
     path = models.CharField('Path of file', max_length=100)
 
     def __unicode__(self):
-        return 'u%s' %(self.name)
+        return self.name
