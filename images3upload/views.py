@@ -16,7 +16,7 @@ class HomePage(TemplateView):
     def post(self, request):
         uploaded = [path.join(settings.FILE_LOCATION, upload_file.name) for upload_file in UploadedFiles.objects.all()]
         folder_files = [path.join(settings.FILE_LOCATION, f) for f in listdir(settings.FILE_LOCATION)]
-        print uploaded, folder_files
+        print (uploaded, folder_files)
         new_images = [v for v in folder_files if v not in uploaded]
 
 
@@ -31,7 +31,7 @@ class HomePage(TemplateView):
             uploaded_data.save()
             s3.upload_file(image, bucket_name, uploaded_data.name)
         else:
-            print "No new images"
+            print ("No new images")
 
 
         return redirect('/')
