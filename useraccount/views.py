@@ -4,6 +4,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
+from .serializers import *
+from .models import *
+from django.contrib.auth.hashers import make_password
+import json
 
 # Create your views here.
 class LoginView(APIView):
@@ -14,7 +18,10 @@ class LoginView(APIView):
          user = authenticate(username=username, password=password)
          if user is not None:
             # A backend authenticated the credentials
-            token = Token.objects.create(user=user)
+            if Token.objects.filter(user=user).exists():
+                token = Token.objects.get(user=user)
+            else:
+                token = Token.objects.create(user=user)
             return Response({'status': 200, 'token': token.key})
          else:
             return Response({'status': 500})
@@ -23,4 +30,20 @@ class LoginView(APIView):
 class Signup(APIView):
 
     def post(self, request):
-        return Response({'status': ok})
+        print (request.data)
+        user_serializer = UserProileSerializer(data=request.data)
+        if user_serializer.is_valid():
+            user = User()
+            user.username = request.data['username']
+            user.first_name = request.data['first_name']
+            user.last_name = request.data['last_name']
+            user.email = request.data['email']
+            user.password = make_password(request.data['password2'])
+            user.save()
+            profile = Useraccount()
+            profile.user = user
+            profile.bucket_name = request.data['bucket_name']
+            profile.save()
+            return Response({'status': 200, 'data': user_serializer.data})
+        else:
+            return Response({'status': 500, 'data': user_serializer.errors})
